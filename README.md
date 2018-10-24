@@ -1,6 +1,6 @@
 # understand.ai Anonymizer
 
-To improve privacy and make it easier for companies to comply with GDPR, we at [understand.ai](understand.ai) 
+To improve privacy and make it easier for companies to comply with GDPR, we at [understand.ai](https://understand.ai/) 
 decided to open-sourcing our anonymization software and weights for a model trained on our in-house datasets 
 for faces and license plates.  
 To make it easy for everyone to use these weights in their own projects the model is trained with 
