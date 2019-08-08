@@ -59,7 +59,7 @@ class Anonymizer:
         for input_image_path in tqdm(files):
             # Create output directory
             relative_path = input_image_path.relative_to(input_path)
-            (Path(output_path) / relative_path.parent).mkdir(exist_ok=True)
+            (Path(output_path) / relative_path.parent).mkdir(exist_ok=True, parents=True)
             output_image_path = Path(output_path) / relative_path
             output_detections_path = (Path(output_path) / relative_path).with_suffix('.json')
 
