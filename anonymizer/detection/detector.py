@@ -10,14 +10,14 @@ class Detector:
 
         self.detection_graph = tf.Graph()
         with self.detection_graph.as_default():
-            od_graph_def = tf.GraphDef()
-            with tf.gfile.GFile(weights_path, 'rb') as fid:
+            od_graph_def = tf.compat.v1.GraphDef()
+            with tf.compat.v1.gfile.GFile(weights_path, 'rb') as fid:
                 serialized_graph = fid.read()
                 od_graph_def.ParseFromString(serialized_graph)
                 tf.import_graph_def(od_graph_def, name='')
 
-        conf = tf.ConfigProto()
-        self.session = tf.Session(graph=self.detection_graph, config=conf)
+        conf = tf.compat.v1.ConfigProto()
+        self.session = tf.compat.v1.Session(graph=self.detection_graph, config=conf)
 
     def _convert_boxes(self, num_boxes, scores, boxes, image_height, image_width, detection_threshold):
         assert detection_threshold >= 0.001, 'Threshold can not be too close to "0".'
