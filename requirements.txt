@@ -3,7 +3,7 @@ flake8==3.5.0
 numpy==1.15.2
 tensorflow-gpu==1.11.0
 scipy==1.1.0
-Pillow==5.3.0
+Pillow==6.2.0
 requests==2.20.0
 googledrivedownloader==0.3
 tqdm==4.28.0
