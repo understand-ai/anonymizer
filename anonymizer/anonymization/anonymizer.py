@@ -1,20 +1,24 @@
 import json
 from pathlib import Path
+from typing import Any, Dict, Tuple
 
 import numpy as np
 from PIL import Image
 from tqdm import tqdm
 
-
-def load_np_image(image_path):
-    image = Image.open(image_path).convert('RGB')
-    np_image = np.array(image)
-    return np_image
+from anonymizer.detection.detector import Detector
+from anonymizer.obfuscation.obfuscator import Obfuscator
 
 
-def save_np_image(image, image_path):
-    pil_image = Image.fromarray((image).astype(np.uint8), mode='RGB')
-    pil_image.save(image_path)
+# def load_np_image(image_path) -> Image.Image:
+#     image = Image.open(image_path).convert('RGB')
+#     np_image = np.array(image)
+#     return np_image
+
+
+# def save_np_image(image, image_path):
+#     pil_image = Image.fromarray((image).astype(np.uint8), mode='RGB')
+#     pil_image.save(image_path)
 
 
 def save_detections(detections, detections_path):
@@ -33,20 +37,34 @@ def save_detections(detections, detections_path):
 
 
 class Anonymizer:
-    def __init__(self, detectors, obfuscator):
+    def __init__(self, detectors: Dict[str, Detector], obfuscator: Obfuscator):
         self.detectors = detectors
         self.obfuscator = obfuscator
 
-    def anonymize_image(self, image, detection_thresholds):
+    @staticmethod
+    def __save_image(filepath: str, image: Image.Image, include_exif: bool):
+        exif = bytes()
+        if include_exif and 'exif' in image.info:
+            exif = image.info['exif']     
+        image.save(filepath, exif=exif)
+
+    def anonymize_image(self, image: Image.Image, detection_thresholds) -> Tuple[Image.Image, Any]:
+        np_img = np.array(image)
+        
         assert set(self.detectors.keys()) == set(detection_thresholds.keys()),\
             'Detector names must match detection threshold names'
         detected_boxes = []
         for kind, detector in self.detectors.items():
-            new_boxes = detector.detect(image, detection_threshold=detection_thresholds[kind])
+            new_boxes = detector.detect(np_img, detection_threshold=detection_thresholds[kind])
             detected_boxes.extend(new_boxes)
-        return self.obfuscator.obfuscate(image, detected_boxes), detected_boxes
+        
+        obfuscation = self.obfuscator.obfuscate(np_img, detected_boxes)
+        obf_img = Image.fromarray((obfuscation).astype(np.uint8), mode='RGB')
+        obf_img.info = image.info
+        
+        return obf_img, detected_boxes
 
-    def anonymize_images(self, input_path, output_path, detection_thresholds, file_types, write_json):
+    def anonymize_images(self, input_path, output_path, detection_thresholds, file_types, write_json: bool, keep_exif: bool):
         print(f'Anonymizing images in {input_path} and saving the anonymized images to {output_path}...')
 
         Path(output_path).mkdir(exist_ok=True)
@@ -64,8 +82,8 @@ class Anonymizer:
             output_detections_path = (Path(output_path) / relative_path).with_suffix('.json')
 
             # Anonymize image
-            image = load_np_image(str(input_image_path))
-            anonymized_image, detections = self.anonymize_image(image=image, detection_thresholds=detection_thresholds)
-            save_np_image(image=anonymized_image, image_path=str(output_image_path))
+            img = Image.open(str(input_image_path)).convert('RGB')
+            anonymized_image, detections = self.anonymize_image(image=img, detection_thresholds=detection_thresholds)
+            self.__save_image(str(output_image_path), anonymized_image, keep_exif)
             if write_json:
                 save_detections(detections=detections, detections_path=str(output_detections_path))

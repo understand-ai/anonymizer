@@ -61,6 +61,7 @@ def parse_args():
                              'To make the transition from blurred areas to the non-blurred image smoother another '
                              'kernel is used which has a default size of 9. Larger values lead to a smoother '
                              'transition. Both kernel sizes must be odd numbers.')
+    parser.add_argument('--keep-exif', dest='keep_exif', action='store_true', help='Set this flag if EXIF tags should be transferred.')
     args = parser.parse_args()
 
     print(f'input: {args.input}')
@@ -76,8 +77,17 @@ def parse_args():
     return args
 
 
-def main(input_path, image_output_path, weights_path, image_extensions, face_threshold, plate_threshold,
-         write_json, obfuscation_parameters):
+def main(
+    input_path,
+    image_output_path,
+    weights_path,
+    image_extensions,
+    face_threshold,
+    plate_threshold,
+    write_json,
+    keep_exif,
+    obfuscation_parameters
+):
     download_weights(download_directory=weights_path)
 
     kernel_size, sigma, box_kernel_size = obfuscation_parameters.split(',')
@@ -91,14 +101,26 @@ def main(input_path, image_output_path, weights_path, image_extensions, face_thr
         'plate': plate_threshold
     }
     anonymizer = Anonymizer(obfuscator=obfuscator, detectors=detectors)
-    anonymizer.anonymize_images(input_path=input_path, output_path=image_output_path,
-                                detection_thresholds=detection_thresholds, file_types=image_extensions.split(','),
-                                write_json=write_json)
+    anonymizer.anonymize_images(
+        input_path=input_path,
+        output_path=image_output_path,
+        detection_thresholds=detection_thresholds,
+        file_types=image_extensions.split(','),
+        write_json=write_json,
+        keep_exif=keep_exif
+    )
 
 
 if __name__ == '__main__':
     args = parse_args()
-    main(input_path=args.input, image_output_path=args.image_output, weights_path=args.weights,
-         image_extensions=args.image_extensions,
-         face_threshold=args.face_threshold, plate_threshold=args.plate_threshold,
-         write_json=args.write_detections, obfuscation_parameters=args.obfuscation_kernel)
+    main(
+        input_path=args.input,
+        image_output_path=args.image_output,
+        weights_path=args.weights,
+        image_extensions=args.image_extensions,
+        face_threshold=args.face_threshold,
+        plate_threshold=args.plate_threshold,
+        write_json=args.write_detections,
+        keep_exif=args.keep_exif,
+        obfuscation_parameters=args.obfuscation_kernel
+    )
