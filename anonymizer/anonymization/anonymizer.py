@@ -10,17 +10,6 @@ from anonymizer.detection.detector import Detector
 from anonymizer.obfuscation.obfuscator import Obfuscator
 
 
-# def load_np_image(image_path) -> Image.Image:
-#     image = Image.open(image_path).convert('RGB')
-#     np_image = np.array(image)
-#     return np_image
-
-
-# def save_np_image(image, image_path):
-#     pil_image = Image.fromarray((image).astype(np.uint8), mode='RGB')
-#     pil_image.save(image_path)
-
-
 def save_detections(detections, detections_path):
     json_output = []
     for box in detections:
