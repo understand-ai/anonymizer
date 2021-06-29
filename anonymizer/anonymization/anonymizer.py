@@ -4,6 +4,7 @@ from typing import Any, Dict, Tuple
 
 import numpy as np
 from PIL import Image
+from PIL.Image import Exif
 from tqdm import tqdm
 
 from anonymizer.detection.detector import Detector
@@ -31,11 +32,21 @@ class Anonymizer:
         self.obfuscator = obfuscator
 
     @staticmethod
+    def __load_image(filepath: str):
+        img = Image.open(filepath)
+        img.paste(img.convert('RGB'))
+        return img
+
+    @staticmethod
     def __save_image(filepath: str, image: Image.Image, include_exif: bool):
-        exif = bytes()
-        if include_exif and 'exif' in image.info:
-            exif = image.info['exif']     
-        image.save(filepath, exif=exif)
+        exif = Exif()
+        if include_exif:
+            exif = image.getexif()
+
+        if image.format == 'JPEG':
+            image.save(filepath, exif=exif, quality='keep')
+        else:
+            image.save(filepath, exif=exif)
 
     def anonymize_image(self, image: Image.Image, detection_thresholds) -> Tuple[Image.Image, Any]:
         np_img = np.array(image)
@@ -49,9 +60,8 @@ class Anonymizer:
         
         obfuscation = self.obfuscator.obfuscate(np_img, detected_boxes)
         obf_img = Image.fromarray((obfuscation).astype(np.uint8), mode='RGB')
-        obf_img.info = image.info
-        
-        return obf_img, detected_boxes
+        image.paste(obf_img)
+        return image, detected_boxes
 
     def anonymize_images(self, input_path, output_path, detection_thresholds, file_types, write_json: bool, keep_exif: bool):
         print(f'Anonymizing images in {input_path} and saving the anonymized images to {output_path}...')
@@ -71,8 +81,8 @@ class Anonymizer:
             output_detections_path = (Path(output_path) / relative_path).with_suffix('.json')
 
             # Anonymize image
-            img = Image.open(str(input_image_path)).convert('RGB')
-            anonymized_image, detections = self.anonymize_image(image=img, detection_thresholds=detection_thresholds)
+            img = self.__load_image(str(input_image_path))
+            anonymized_image, detections = self.anonymize_image(img, detection_thresholds)
             self.__save_image(str(output_image_path), anonymized_image, keep_exif)
             if write_json:
                 save_detections(detections=detections, detections_path=str(output_detections_path))
