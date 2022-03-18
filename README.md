@@ -50,6 +50,11 @@ pytest
 Running the test cases can take several minutes and is dependent on your GPU (or CPU) and internet speed.  
 Some test cases download model weights and some perform inference to make sure everything works as intended.
 
+## Weights
+[weights_face_v1.0.0.pb](https://drive.google.com/file/d/1CwChAYxJo3mON6rcvXsl82FMSKj82vxF)
+
+[weights_plate_v1.0.0.pb](https://drive.google.com/file/d/1Fls9FYlQdRlLAtw-GVS_ie1oQUYmci9g)
+
 
 ## Usage
 
