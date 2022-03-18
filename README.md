@@ -1,28 +1,19 @@
 # understand.ai Anonymizer
 
-To improve privacy and make it easier for companies to comply with GDPR, we at [understand.ai](https://understand.ai/) 
-decided to open-sourcing our anonymization software and weights for a model trained on our in-house datasets 
-for faces and license plates.  
-To make it easy for everyone to use these weights in their own projects the model is trained with 
-[Tensorflow Object Detection API](https://github.com/tensorflow/models/tree/master/research/object_detection).
+To improve privacy and make it easier for companies to comply with GDPR, we at [understand.ai](https://understand.ai/) decided to open-source our anonymization software and weights for a model trained on our in-house datasets for faces and license plates.
+The model is trained with the [Tensorflow Object Detection API](https://github.com/tensorflow/models/tree/master/research/object_detection) to make it easy for everyone to use these weights in their projects.
 
 Our anonymizer is used for projects with some of Germany's largest car manufacturers and suppliers,
 but we are sure there are many more applications.  
-We are looking forward to a widespread use and would love to hear your feedback.  
-Feel free to contact us with any questions at anonymizer@understand.ai.
-
 
 ## Disclaimer
 
-Note that the version here is not identical to the anonymizer we use with our customers. The models are fairly similar,
-but the glue-code is written for easy-of-use instead of speed.  
-For this reason no multiprocessing code or batched detection and blurring are used in this repository.
+Please note that the version here is not identical to the anonymizer we use in customer projects. This model is an early version in terms of quality and speed. The code is written for easy-of-use instead of speed.  
+For this reason, no multiprocessing code or batched detection and blurring are used in this repository.
 
-This version of our anonymizer is trained to detect faces and license plates in images recorded with sensors that are
+This version of our anonymizer is trained to detect faces and license plates in images recorded with sensors 
 typically used in autonomous vehicles. It will not work on low-quality or grayscale images and will also not work on 
-fish-eye or other extreme camera  configuration.
-If there is high demand for models specialised for certain camera configurations, we might decide to open-source our 
-more specialised models as well.
+fish-eye or other extreme camera configurations.
 
 
 ## Examples
