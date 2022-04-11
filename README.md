@@ -1,4 +1,11 @@
-# understand.ai Anonymizer
+___
+
+⚠️  **ARCHIVED REPOSITORY** ⚠️   
+
+**We decided to archive this repository to make it read-only and indicate that it's no longer actively maintained.**
+___
+
+# understand.ai Anonymizer [ARCHIVED]
 
 To improve privacy and make it easier for companies to comply with GDPR, we at [understand.ai](https://understand.ai/) decided to open-source our anonymization software and weights for a model trained on our in-house datasets for faces and license plates.
 The model is trained with the [Tensorflow Object Detection API](https://github.com/tensorflow/models/tree/master/research/object_detection) to make it easy for everyone to use these weights in their projects.
